@@ -1,24 +1,60 @@
 package com.food4thought.test;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
-public class MainActivity extends DrawerActivity {
+public class MainActivity extends DrawerActivity implements View.OnClickListener{
+
+    private Button searchBtn;
+    private Button mapBtn;
+    private Button categoriesBtn;
+    private Button favouritesBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // don’t set any content view here, since its already set in DrawerActivity
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.activity_frame);
-        // inflate the custom activity layout
         LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View activityView = layoutInflater.inflate(R.layout.activity_main, null,false);
-        // add the custom layout of this activity to frame layout.
         frameLayout.addView(activityView);
-        // now you can do all your other stuffs
+
+        searchBtn = (Button) findViewById(R.id.search_button);
+        searchBtn.setOnClickListener(this);
+        mapBtn = (Button) findViewById(R.id.map_button);
+        mapBtn.setOnClickListener(this);
+        categoriesBtn = (Button) findViewById(R.id.category_button);
+        categoriesBtn.setOnClickListener(this);
+        favouritesBtn = (Button) findViewById( R.id.favourite_button);
+        favouritesBtn.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.search_button:
+                buttonClick("com.food4thought.search");
+                break;
+            case R.id.map_button:
+                buttonClick("com.food4thought.map");
+                break;
+            case R.id.category_button:
+                buttonClick("com.food4thought.category");
+                break;
+            case R.id.favourite_button:
+                buttonClick("com.food4thought.favourites");
+                break;
+        }
+    }
+
+    private void buttonClick(String s)
+    {
+        startActivity(new Intent(s));
     }
 }
