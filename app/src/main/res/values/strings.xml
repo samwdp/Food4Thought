@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Food4Thought</string>
+    <string-array name="left_drawer_array">
+        <item>Home</item>
+        <item>Search</item>
+        <item>Map</item>
+        <item>Favorites</item>
+        <item>Categories</item>
+        <item>Settings</item>
+    </string-array>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
