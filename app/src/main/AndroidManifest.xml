@@ -57,7 +57,7 @@
 
         <activity
             android:name=".FavouritesActivity"
-            android:label="@string/title_activity_search" >
+            android:label="@string/title_activity_favourite" >
             <intent-filter>
                 <action android:name="com.food4thought.favourites" />
 

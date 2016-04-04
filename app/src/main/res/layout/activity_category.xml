@@ -10,4 +10,13 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.food4thought.test.CategoryActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Categorites"
+        android:id="@+id/textView2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="94dp" />
 </RelativeLayout>

@@ -7,6 +7,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class DrawerActivity extends ActionBarActivity {
+public class DrawerActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout = null;
     private ListView mDrawerList = null;
     private String[] mDrawerItems;
@@ -105,6 +106,16 @@ public class DrawerActivity extends ActionBarActivity {
                 }
                 case 2: {
                     Intent intent = new Intent(DrawerActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case 3: {
+                    Intent intent = new Intent(DrawerActivity.this, FavouritesActivity.class);
+                    startActivity(intent);
+                    break;
+                }
+                case 4: {
+                    Intent intent = new Intent(DrawerActivity.this, CategoryActivity.class);
                     startActivity(intent);
                     break;
                 }
