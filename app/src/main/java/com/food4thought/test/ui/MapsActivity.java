@@ -2,6 +2,7 @@ package com.food4thought.test.ui;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Icon;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -31,6 +32,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -68,10 +71,10 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
         updatePlaces();
         String placesSearchStr = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
-                "json?location="+userLat+","+userLng+
-                "&radius=2000&sensor=true" +
-                "&types=food|bar|cafe"+
-                "&key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0";
+                "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
+                "&location="+userLat+","+userLng+
+                "&radius=1000&sensor=true" +
+                "&types=bar|cafe|restaurant";
 
         GetPlaces placesTask = new GetPlaces();
         placesTask.execute(placesSearchStr);
@@ -202,15 +205,12 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                         Log.w("JSON", Integer.toString(result.size()));
                         for (RestaurantModel restaurantModel : result) {
                             Log.w("JSON", restaurantModel.getName());
-                            Log.w("JSON", restaurantModel.getName());
-
-                            MarkerOptions markerOptions = new MarkerOptions();
-
+                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
                             double lat = restaurantModel.getGeometry().getLocation().getLat();
                             Log.w("JSON", Double.toString(lat));
                             double lng = restaurantModel.getGeometry().getLocation().getLng();
                             LatLng l = new LatLng(lat, lng);
-                            mMap.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet(Boolean.toString(restaurantModel.getOpeningHours().isOpen_now())));
+                            mMap.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet(Boolean.toString(restaurantModel.getOpeningHours().isOpen_now())).icon(icon));
 
                             Log.w("JSON", "added to map");
                         }
