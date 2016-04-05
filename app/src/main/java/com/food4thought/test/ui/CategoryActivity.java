@@ -1,11 +1,12 @@
-package com.food4thought.test;
+package com.food4thought.test.ui;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import com.food4thought.test.R;
 
 public class CategoryActivity extends DrawerActivity {
 

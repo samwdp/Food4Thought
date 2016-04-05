@@ -1,13 +1,13 @@
-package com.food4thought.test;
+package com.food4thought.test.ui;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+
+import com.food4thought.test.R;
 
 public class MainActivity extends DrawerActivity implements View.OnClickListener{
 
@@ -20,7 +20,7 @@ public class MainActivity extends DrawerActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FrameLayout frameLayout = (FrameLayout)findViewById(R.id.activity_frame);
-        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
         View activityView = layoutInflater.inflate(R.layout.activity_main, null,false);
         frameLayout.addView(activityView);
 

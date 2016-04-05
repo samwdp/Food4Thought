@@ -1,8 +1,9 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:id="@+id/the_map"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.food4thought.test.MapsActivity" />
+    android:name="com.google.android.gms.maps.MapFragment"
+    map:cameraTilt="45"
+    map:cameraZoom="14"
+    />
