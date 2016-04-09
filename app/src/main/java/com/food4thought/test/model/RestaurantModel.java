@@ -10,7 +10,6 @@ public class RestaurantModel {
 
     @SerializedName("types")
     private List<String> types;
-
     @SerializedName("id")
     private String id;
     @SerializedName("place_id")
@@ -144,9 +143,9 @@ public class RestaurantModel {
         }
 
         public static class Location{
-
+            @SerializedName("lat")
             private double lat;
-
+            @SerializedName("lng")
             private double lng;
 
             public double getLat() {
@@ -191,7 +190,6 @@ public class RestaurantModel {
     }
 
     public static class Photos{
-
         private List<HtmlAttributes> htmlAttributes;
         private String photoReference;
         private int width;
