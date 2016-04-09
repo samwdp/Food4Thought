@@ -10,5 +10,5 @@ import java.util.List;
  */
 public class Constants {
 
-    public static ArrayList<RestaurantModel> restaurantModelList;
+    public static List<RestaurantModel> restaurantModelList;
 }

@@ -191,8 +191,11 @@ public class RestaurantModel {
 
     public static class Photos{
         private List<HtmlAttributes> htmlAttributes;
+        @SerializedName("photo_reference")
         private String photoReference;
+        @SerializedName("width")
         private int width;
+        @SerializedName("height")
         private int height;
 
         public List<HtmlAttributes> getHtmlAttributes() {
@@ -238,8 +241,5 @@ public class RestaurantModel {
                 this.name = name;
             }
         }
-
-
     }
-
 }

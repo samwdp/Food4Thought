@@ -120,11 +120,6 @@ public class DrawerActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 }
-                case 5: {
-                    Intent intent = new Intent(DrawerActivity.this, RestaurantViewActivity.class);
-                    startActivity(intent);
-                    break;
-                }
                 default:
                     break;
             }

@@ -1,6 +1,7 @@
 package com.food4thought.test.ui;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Icon;
 import android.location.Location;
@@ -46,12 +47,13 @@ import org.json.JSONObject;
 
 public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleMap mMap;
+    private GoogleMap map;
     private GoogleApiClient mGoogleApiClient;
     private LocationManager locMan;
     private Marker userMarker;
     private double userLat;
     private double userLng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,30 +62,37 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View activityView = layoutInflater.inflate(R.layout.activity_maps, null, false);
         frameLayout.addView(activityView);
-        if (mMap == null) {
-            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map)).getMap();
+        /*if (mMap == null) {
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map));
+        }*/
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.the_map); mapFragment.getMapAsync(this);
+
+    }
+
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        this.map = map;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
         }
-
-        if (mMap != null) {
-            //ok - proceed
-        }
-
-
+        //map.setMyLocationEnabled(true);
         updatePlaces();
         String placesSearchStr = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
                 "&location=" + userLat + "," + userLng +
                 "&radius=1000&sensor=true" +
                 "&types=bar|cafe|restaurant";
-
         GetPlaces placesTask = new GetPlaces();
         placesTask.execute(placesSearchStr);
-    }
-
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
     }
 
     @Override
@@ -114,11 +123,11 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
         if (userMarker != null) userMarker.remove();
 
-        userMarker = mMap.addMarker(new MarkerOptions()
+        userMarker = map.addMarker(new MarkerOptions()
                 .position(lastLatLng)
                 .title("You are here")
                 .snippet("Your last recorded location"));
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 150, null);
+        map.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 150, null);
 
 
     }
@@ -149,7 +158,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                     JSONObject restaurantObject = new JSONObject(buffer.toString());
                     JSONArray restaurantArray = restaurantObject.getJSONArray("results");
 
-                    ArrayList<RestaurantModel> restaurantModels = new ArrayList<>();
+                    List<RestaurantModel> restaurantModels = new ArrayList<>();
 
                     Gson gson = new Gson();
 
@@ -163,7 +172,6 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
                     }
                     Constants.restaurantModelList =  restaurantModels;
-                    Log.w("JSON", "finished modelling");
                     return restaurantModels;
                 }
 
@@ -177,12 +185,10 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
             } finally {
                 if (con != null) {
                     con.disconnect();
-                    Log.w("JSON", "con disconnect");
                 }
                 if (reader != null) {
                     try {
                         reader.close();
-                        Log.w("JSON", "reader disconnect");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -194,23 +200,23 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         @Override
         protected void onPostExecute(final List<RestaurantModel> result) {
             super.onPostExecute(result);
-            Log.w("JSON", "on post execute");
             if (result != null) {
-                if (mMap != null) {
+                if (map != null) {
                     try {
-                        Log.w("JSON", "result");
-                        Log.w("JSON", Integer.toString(result.size()));
                         for (RestaurantModel restaurantModel : result) {
-                            Log.w("JSON", restaurantModel.getName());
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
                             double lat = restaurantModel.getGeometry().getLocation().getLat();
-                            Log.w("JSON", Double.toString(lat));
                             double lng = restaurantModel.getGeometry().getLocation().getLng();
                             LatLng l = new LatLng(lat, lng);
-                            mMap.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet(Boolean.toString(restaurantModel.getOpeningHours().isOpen_now())).icon(icon));
-
-                            Log.w("JSON", "added to map");
-                        }
+                            map.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet("Rating : " + Double.toString(restaurantModel.getRating())).icon(icon));
+                            map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                                @Override
+                                public void onMapLongClick(LatLng latLng) {
+                                    Intent i = new Intent(MapsActivity.this, RestaurantViewActivity.class);
+                                    startActivity(i);
+                                }
+                            });
+                           }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
