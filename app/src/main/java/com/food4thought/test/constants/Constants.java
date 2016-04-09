@@ -11,4 +11,5 @@ import java.util.List;
 public class Constants {
 
     public static List<RestaurantModel> restaurantModelList;
+    public static String reference;
 }

@@ -51,6 +51,8 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     private GoogleApiClient mGoogleApiClient;
     private LocationManager locMan;
     private Marker userMarker;
+    private Marker restaurantMarker;
+    private ArrayList<Marker> markerArrayList;
     private double userLat;
     private double userLng;
 
@@ -62,6 +64,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View activityView = layoutInflater.inflate(R.layout.activity_maps, null, false);
         frameLayout.addView(activityView);
+        markerArrayList = new ArrayList<Marker>();
         /*if (mMap == null) {
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map));
         }*/
@@ -203,17 +206,27 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
             if (result != null) {
                 if (map != null) {
                     try {
-                        for (RestaurantModel restaurantModel : result) {
+                        for (final RestaurantModel restaurantModel : result) {
                             BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
                             double lat = restaurantModel.getGeometry().getLocation().getLat();
                             double lng = restaurantModel.getGeometry().getLocation().getLng();
                             LatLng l = new LatLng(lat, lng);
-                            map.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet("Rating : " + Double.toString(restaurantModel.getRating())).icon(icon));
-                            map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                            restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet("Rating : " + Double.toString(restaurantModel.getRating())).icon(icon));
+                            markerArrayList.add(restaurantMarker);
+                            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                 @Override
-                                public void onMapLongClick(LatLng latLng) {
-                                    Intent i = new Intent(MapsActivity.this, RestaurantViewActivity.class);
-                                    startActivity(i);
+                                public boolean onMarkerClick(Marker marker) {
+                                    for(RestaurantModel r : result){
+                                        if(r.getName().equals(marker.getTitle())){
+                                            Log.w("JSON", marker.getTitle());
+                                            Constants.reference = r.getPlace_id();
+                                            Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                        }
+                                    }
+                                    return false;
                                 }
                             });
                            }
@@ -224,4 +237,8 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
             }
         }
     }
+
+
+
+
 }
