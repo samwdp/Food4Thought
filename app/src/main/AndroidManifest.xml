@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.food4thought.test" >
+    package="com.food4thought.test">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -19,8 +19,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".ui.MainActivity" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,34 +42,31 @@
 
         <activity
             android:name=".ui.MapsActivity"
-            android:label="@string/title_activity_maps" >
+            android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="com.food4thought.map" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.SearchActivity"
-            android:label="@string/title_activity_search" >
+            android:label="@string/title_activity_search">
             <intent-filter>
                 <action android:name="com.food4thought.search" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.FavouritesActivity"
-            android:label="@string/title_activity_favourite" >
+            android:label="@string/title_activity_favourite">
             <intent-filter>
                 <action android:name="com.food4thought.favourites" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.CategoryActivity"
             android:label="@string/title_activity_categories">
@@ -79,7 +76,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.RestaurantViewActivity"
+            android:label="@string/title_activity_restaurant">
+            <intent-filter>
+                <action android:name="com.food4thought.RestaurantViewActivity" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

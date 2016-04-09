@@ -25,6 +25,7 @@ import java.util.List;
 
 
 import com.food4thought.test.R;
+import com.food4thought.test.constants.Constants;
 import com.food4thought.test.model.RestaurantModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,7 +50,6 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     private GoogleApiClient mGoogleApiClient;
     private LocationManager locMan;
     private Marker userMarker;
-    private List<RestaurantModel> restaurantModelList;
     private double userLat;
     private double userLng;
 
@@ -60,11 +60,11 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View activityView = layoutInflater.inflate(R.layout.activity_maps, null, false);
         frameLayout.addView(activityView);
-        if(mMap==null){
-            mMap = ((MapFragment)getFragmentManager().findFragmentById(R.id.the_map)).getMap();
+        if (mMap == null) {
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map)).getMap();
         }
 
-        if(mMap != null){
+        if (mMap != null) {
             //ok - proceed
         }
 
@@ -72,14 +72,13 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         updatePlaces();
         String placesSearchStr = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
-                "&location="+userLat+","+userLng+
+                "&location=" + userLat + "," + userLng +
                 "&radius=1000&sensor=true" +
                 "&types=bar|cafe|restaurant";
 
         GetPlaces placesTask = new GetPlaces();
         placesTask.execute(placesSearchStr);
     }
-
 
 
     @Override
@@ -95,7 +94,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     /**
      * Gets the last known location of the user
      */
-    private void updatePlaces(){
+    private void updatePlaces() {
         locMan = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -113,7 +112,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
         LatLng lastLatLng = new LatLng(userLat, userLng);
 
-        if(userMarker!=null) userMarker.remove();
+        if (userMarker != null) userMarker.remove();
 
         userMarker = mMap.addMarker(new MarkerOptions()
                 .position(lastLatLng)
@@ -122,11 +121,9 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 150, null);
 
 
-
     }
 
-    private class GetPlaces extends AsyncTask<String, Void, List<RestaurantModel>>
-    {
+    private class GetPlaces extends AsyncTask<String, Void, List<RestaurantModel>> {
         @Override
         protected List<RestaurantModel> doInBackground(String... placesURL) {
             HttpURLConnection con = null;
@@ -143,30 +140,31 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 String line = "";
                 int status = con.getResponseCode();
 
-               if(status == 200){
-                        while ((line = reader.readLine()) != null){
-                            buffer.append(line);
-                            //Log.w("JSON", line);
-                        }
+                if (status == 200) {
+                    while ((line = reader.readLine()) != null) {
+                        buffer.append(line);
+                        //Log.w("JSON", line);
+                    }
 
-                        JSONObject restaurantObject = new JSONObject(buffer.toString());
-                        JSONArray restaurantArray = restaurantObject.getJSONArray("results");
+                    JSONObject restaurantObject = new JSONObject(buffer.toString());
+                    JSONArray restaurantArray = restaurantObject.getJSONArray("results");
 
-                        List<RestaurantModel> restaurantModels = new ArrayList<>();
+                    ArrayList<RestaurantModel> restaurantModels = new ArrayList<>();
 
-                        Gson gson = new Gson();
+                    Gson gson = new Gson();
 
-                        for(int i = 0; i<restaurantArray.length(); i++){
-                            JSONObject object = restaurantArray.getJSONObject(i);
-                            //Log.w("JSON", object.toString());
-                            RestaurantModel restaurantModel = gson.fromJson(object.toString(), RestaurantModel.class);
+                    for (int i = 0; i < restaurantArray.length(); i++) {
+                        JSONObject object = restaurantArray.getJSONObject(i);
+                        //Log.w("JSON", object.toString());
+                        RestaurantModel restaurantModel = gson.fromJson(object.toString(), RestaurantModel.class);
 
-                            restaurantModels.add(restaurantModel);
-                            //Log.w("JSON", Double.toString(restaurantModel.getGeometry().get(0).getLocations().get(0).getLat()));
+                        restaurantModels.add(restaurantModel);
+                        //Log.w("JSON", Double.toString(restaurantModel.getGeometry().get(0).getLocations().get(0).getLat()));
 
-                        }
-                        Log.w("JSON", "finished modelling");
-                        return restaurantModels;
+                    }
+                    Constants.restaurantModelList =  restaurantModels;
+                    Log.w("JSON", "finished modelling");
+                    return restaurantModels;
                 }
 
 
@@ -176,12 +174,12 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
-            } finally{
-                if(con != null) {
+            } finally {
+                if (con != null) {
                     con.disconnect();
                     Log.w("JSON", "con disconnect");
                 }
-                if(reader != null){
+                if (reader != null) {
                     try {
                         reader.close();
                         Log.w("JSON", "reader disconnect");
@@ -194,12 +192,11 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         }
 
         @Override
-        protected void onPostExecute(final List<RestaurantModel> result){
+        protected void onPostExecute(final List<RestaurantModel> result) {
             super.onPostExecute(result);
             Log.w("JSON", "on post execute");
-            if(result!=null)
-            {
-                if(mMap != null) {
+            if (result != null) {
+                if (mMap != null) {
                     try {
                         Log.w("JSON", "result");
                         Log.w("JSON", Integer.toString(result.size()));
@@ -214,7 +211,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
                             Log.w("JSON", "added to map");
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }

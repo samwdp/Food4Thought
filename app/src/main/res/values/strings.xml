@@ -6,7 +6,7 @@
         <item>Map</item>
         <item>Favorites</item>
         <item>Categories</item>
-        <item>Settings</item>
+        <item>Resturant</item>
     </string-array>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -14,4 +14,6 @@
     <string name="title_activity_search">Search</string>
     <string name="title_activity_categories">Categories</string>
     <string name="title_activity_favourite">Favourites</string>
+    <string name="title_activity_restaurant">Retuarant</string>
+    <string name="one">Detatils</string>
 </resources>
