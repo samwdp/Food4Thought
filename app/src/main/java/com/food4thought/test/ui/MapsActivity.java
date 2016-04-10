@@ -55,7 +55,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     private ArrayList<Marker> markerArrayList;
     private double userLat;
     private double userLng;
-
+    private String PLACES_SEARCH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,8 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
             mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.the_map));
         }*/
         MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.the_map); mapFragment.getMapAsync(this);
+                .findFragmentById(R.id.the_map);
+        mapFragment.getMapAsync(this);
 
     }
 
@@ -77,25 +78,16 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        //map.setMyLocationEnabled(true);
         updatePlaces();
-        String placesSearchStr = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
+        PLACES_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
                 "&location=" + userLat + "," + userLng +
                 "&radius=1000&sensor=true" +
                 "&types=bar|cafe|restaurant";
+
         GetPlaces placesTask = new GetPlaces();
-        placesTask.execute(placesSearchStr);
+        placesTask.execute(PLACES_SEARCH);
+        Log.w("JSON", PLACES_SEARCH);
     }
 
     @Override
@@ -108,6 +100,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
      */
     private void updatePlaces() {
         locMan = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -121,6 +114,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         userLat = lastLoc.getLatitude();
         userLng = lastLoc.getLongitude();
+
 
         LatLng lastLatLng = new LatLng(userLat, userLng);
 
@@ -155,8 +149,8 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 if (status == 200) {
                     while ((line = reader.readLine()) != null) {
                         buffer.append(line);
-                        //Log.w("JSON", line);
                     }
+
 
                     JSONObject restaurantObject = new JSONObject(buffer.toString());
                     JSONArray restaurantArray = restaurantObject.getJSONArray("results");
@@ -167,14 +161,13 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
                     for (int i = 0; i < restaurantArray.length(); i++) {
                         JSONObject object = restaurantArray.getJSONObject(i);
-                        //Log.w("JSON", object.toString());
+
                         RestaurantModel restaurantModel = gson.fromJson(object.toString(), RestaurantModel.class);
 
                         restaurantModels.add(restaurantModel);
-                        //Log.w("JSON", Double.toString(restaurantModel.getGeometry().get(0).getLocations().get(0).getLat()));
 
                     }
-                    Constants.restaurantModelList =  restaurantModels;
+                    Constants.restaurantModelList = restaurantModels;
                     return restaurantModels;
                 }
 
@@ -216,9 +209,8 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                 @Override
                                 public boolean onMarkerClick(Marker marker) {
-                                    for(RestaurantModel r : result){
-                                        if(r.getName().equals(marker.getTitle())){
-                                            Log.w("JSON", marker.getTitle());
+                                    for (RestaurantModel r : result) {
+                                        if (r.getName().equals(marker.getTitle())) {
                                             Constants.reference = r.getPlace_id();
                                             Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
                                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -229,7 +221,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                                     return false;
                                 }
                             });
-                           }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -237,8 +229,4 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
             }
         }
     }
-
-
-
-
 }

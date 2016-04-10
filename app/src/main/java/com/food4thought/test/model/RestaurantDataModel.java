@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class RestaurantDataModel {
 
-    private List<AddressComponents> addressComponentses;
+    private List<AddressComponents> addressComponents;
     @SerializedName("formatted_address")
     private String formattedAddress;
     @SerializedName("formatted_phone_number")
@@ -22,7 +22,7 @@ public class RestaurantDataModel {
     private String placeId;
     private String Scope;
     @SerializedName("rating")
-    private Double rating;
+    private float rating;
     private String reference;
     private String url;
     private String vicinity;
@@ -41,12 +41,12 @@ public class RestaurantDataModel {
         this.reviews = reviews;
     }
 
-    public List<AddressComponents> getAddressComponentses() {
-        return addressComponentses;
+    public List<AddressComponents> getAddressComponents() {
+        return addressComponents;
     }
 
-    public void setAddressComponentses(List<AddressComponents> addressComponentses) {
-        this.addressComponentses = addressComponentses;
+    public void setAddressComponents(List<AddressComponents> addressComponents) {
+        this.addressComponents = addressComponents;
     }
 
     public String getFormattedAddress() {
@@ -113,11 +113,11 @@ public class RestaurantDataModel {
         Scope = scope;
     }
 
-    public Double getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(Double rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 

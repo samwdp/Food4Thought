@@ -15,19 +15,18 @@
         android:layout_height="wrap_content"
         android:text="Search"
         android:id="@+id/search_button"
+        android:drawableLeft="@drawable/ic_search_black_24dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="49dp"
-        android:drawableLeft="@drawable/ic_search_black_24dp"/>
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Map"
         android:id="@+id/map_button"
-        android:layout_marginTop="93dp"
         android:drawableLeft="@drawable/ic_map_black_24dp"
-        android:layout_below="@+id/search_button"
+        android:layout_marginBottom="98dp"
+        android:layout_above="@+id/favourite_button"
         android:layout_centerHorizontal="true" />
 
     <Button
@@ -36,16 +35,16 @@
         android:text="Favourites"
         android:id="@+id/favourite_button"
         android:drawableLeft="@drawable/ic_star_black_24dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginBottom="95dp"
+        android:layout_above="@+id/category_button"
+        android:layout_alignStart="@+id/category_button" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Categories"
         android:id="@+id/category_button"
-        android:layout_marginTop="119dp"
         android:drawableLeft="@drawable/ic_sort_black_24dp"
-        android:layout_below="@+id/favourite_button"
-        android:layout_alignStart="@+id/favourite_button" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
