@@ -72,7 +72,6 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private static final String TAG = "MyActivity";
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,14 +233,15 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 phone.setText(restaurantDataModel.getFormattedPhoneNumber());
 
                 //gets the photos from the Places Photo API
-                /*try {
-                    Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
-                        @Override
-                        public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
-                            if (placePhotoMetadataResult.getStatus().isSuccess()) {
-                                PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
-                                int photoCount = photoMetadata.getCount();
 
+                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
+                    @Override
+                    public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
+                        if (placePhotoMetadataResult.getStatus().isSuccess()) {
+                            PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
+                            int photoCount = photoMetadata.getCount();
+
+                            if (photoCount > 1) {
                                 PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(0);
                                 final String photoDetail = placePhotoMetadata.toString();
                                 placePhotoMetadata.getScaledPhoto(mGoogleApiClient, 500, 500).setResultCallback(new ResultCallback<PlacePhotoResult>() {
@@ -257,15 +257,16 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                                 });
 
                                 photoMetadata.release();
-                            } else {
+                            } else{
                                 mText.setText("No photos found");
-                                Log.e(TAG, "No photos returned");
                             }
+                        } else {
+
+                            Log.e(TAG, "No photos returned");
                         }
-                    });
-                }catch(Exception e){
-                    e.printStackTrace();
-                }*/
+                    }
+                });
+
                 website.setText(restaurantDataModel.getWebsite());
                 favourites.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -280,7 +281,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
 
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
