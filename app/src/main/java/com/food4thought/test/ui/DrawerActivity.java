@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toolbar;
 
 import com.food4thought.test.R;
 
@@ -41,8 +42,10 @@ public class DrawerActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         mDrawerToggle = new ActionBarDrawerToggle(this,
-                mDrawerLayout, R.drawable.ic_menu_black_24dp,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+                mDrawerLayout,
+                R.drawable.ic_menu_black_24dp,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close) {
             public void onDrawerOpened(View view) {
                 invalidateOptionsMenu();
             }

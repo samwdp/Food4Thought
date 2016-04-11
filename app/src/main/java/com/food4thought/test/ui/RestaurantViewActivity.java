@@ -1,9 +1,7 @@
 package com.food4thought.test.ui;
 
-
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,7 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +64,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private String placeID;
     private String PLACES_DATA_REQUEST;
     private GoogleApiClient mGoogleApiClient;
+    private static final String TAG = "MyActivity";
 
 
 
@@ -208,24 +206,27 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
 
                 //Text on the details fragment
                 nameText = (TextView) findViewById(R.id.tvTitle);
-                restaurantRating = (RatingBar) findViewById(R.id.rbRestauarant);
+                restaurantRating = (RatingBar) findViewById(R.id.rbRestaurant);
                 formattedAddress = (TextView) findViewById(R.id.tvAddress);
                 phone = (TextView) findViewById(R.id.tvPhone);
                 website = (TextView) findViewById(R.id.tvQWebsite);
                 mImageView = (ImageView) findViewById(R.id.ivImage);
+                mText = (TextView) findViewById(R.id.tvPhoto);
 
-
+                //Sets the text on the details fragment
                 nameText.setText(restaurantDataModel.getName());
                 restaurantRating.setRating(restaurantDataModel.getRating());
                 formattedAddress.setText(restaurantDataModel.getFormattedAddress());
                 phone.setText(restaurantDataModel.getFormattedPhoneNumber());
 
-                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
-                    @Override
-                    public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
-                        if (placePhotoMetadataResult.getStatus().isSuccess()) {
-                            PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
-                            int photoCount = photoMetadata.getCount();
+                //gets the photos from the Places Photo API
+                try {
+                    Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
+                        @Override
+                        public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
+                            if (placePhotoMetadataResult.getStatus().isSuccess()) {
+                                PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
+                                int photoCount = photoMetadata.getCount();
 
                                 PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(0);
                                 final String photoDetail = placePhotoMetadata.toString();
@@ -234,21 +235,26 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                                     public void onResult(PlacePhotoResult placePhotoResult) {
                                         if (placePhotoResult.getStatus().isSuccess()) {
                                             mImageView.setImageBitmap(placePhotoResult.getBitmap());
-                                            //Log.i(TAG, "Photo "+photoDetail+" loaded");
+                                            Log.i(TAG, "Photo " + photoDetail + " loaded");
                                         } else {
-                                            //Log.e(TAG, "Photo "+photoDetail+" failed to load");
+                                            Log.e(TAG, "Photo " + photoDetail + " failed to load");
                                         }
                                     }
                                 });
 
-                            photoMetadata.release();
-                        } else {
-                            //Log.e(TAG, "No photos returned");
+                                photoMetadata.release();
+                            } else {
+                                mText.setText("No photos found");
+                                Log.e(TAG, "No photos returned");
+                            }
                         }
-                    }
-                });
+                    });
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
                 website.setText(restaurantDataModel.getWebsite());
-                //Reviews
+
+                //Sets the text on the Reviews fragment
                 lvReview = (ListView) findViewById(R.id.lvReview);
                 ReviewAdapter adapter = new ReviewAdapter(getApplicationContext(), R.layout.review_row, reviewsList);
                 lvReview.setAdapter(adapter);
@@ -310,10 +316,10 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
             }
             RestaurantDataModel.Reviews r = restaurantDataModels.get(position);
 
+            //setting the text of the row
             holder.tvUser.setText(r.getAuthorName());
             holder.rating.setRating(r.getRating());
             holder.tvReviewText.setText(r.getText());
-
             return convertView;
         }
 

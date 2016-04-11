@@ -40,9 +40,8 @@
             android:layout_height="wrap_content"
             android:clickable="false"
             android:isIndicator="true"
-            android:id="@+id/rbRestauarant"
+            android:id="@+id/rbRestaurant"
             android:stepSize=".5" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,6 +57,10 @@
             android:layout_height="wrap_content"
             android:text="Website"
             android:id="@+id/tvQWebsite" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvPhoto" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
