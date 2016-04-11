@@ -7,13 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.food4thought.test.model.RestaurantDataModel;
 import com.food4thought.test.model.RestaurantDatabaseModel;
 
 import java.util.ArrayList;
 
 /**
- * Handles the creation of the database with adding and getting the infromation
+ * Handles the creation of the database with adding and getting the information from database
  * Created by samwdp on 09/04/2016.
  */
 public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantListener{
@@ -93,7 +92,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
                 if(rest != null) {
                     r.add(rest);
                 } else{
-                    Log.w("JSON", "nothing in resturant");
+                    Log.w("JSON", "nothing in restuarant");
                 }
 
             } while (cursor.moveToNext());
