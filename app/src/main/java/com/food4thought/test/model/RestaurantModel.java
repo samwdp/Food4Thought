@@ -23,7 +23,7 @@ public class RestaurantModel {
     @SerializedName("name")
     private String name;
     @SerializedName("rating")
-    private double rating;
+    private float rating;
     @SerializedName("reference")
     private String reference;
     @SerializedName("opening_hours")
@@ -105,11 +105,11 @@ public class RestaurantModel {
         this.name = name;
     }
 
-    public double getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 

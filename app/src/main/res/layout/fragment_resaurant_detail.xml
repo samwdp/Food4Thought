@@ -66,4 +66,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/ivImage"/>
         </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add to Favouties"
+        android:id="@+id/btnFavourites"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>

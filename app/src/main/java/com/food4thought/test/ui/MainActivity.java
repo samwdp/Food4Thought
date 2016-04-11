@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.food4thought.test.R;
+import com.food4thought.test.constants.Constants;
+import com.food4thought.test.databse.RestaurantDatabase;
 
 public class MainActivity extends DrawerActivity implements View.OnClickListener{
 
@@ -32,6 +34,9 @@ public class MainActivity extends DrawerActivity implements View.OnClickListener
         categoriesBtn.setOnClickListener(this);
         favouritesBtn = (Button) findViewById( R.id.favourite_button);
         favouritesBtn.setOnClickListener(this);
+
+        RestaurantDatabase r = new RestaurantDatabase(getApplicationContext());
+        Constants.database = r;
 
     }
 

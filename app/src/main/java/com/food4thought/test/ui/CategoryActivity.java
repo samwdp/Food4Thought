@@ -8,7 +8,8 @@ import android.widget.FrameLayout;
 
 import com.food4thought.test.R;
 
-public class CategoryActivity extends DrawerActivity {
+public class
+        CategoryActivity extends DrawerActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

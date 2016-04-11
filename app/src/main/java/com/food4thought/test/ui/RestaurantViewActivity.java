@@ -15,13 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.food4thought.test.R;
 import com.food4thought.test.constants.Constants;
+import com.food4thought.test.databse.RestaurantDatabase;
 import com.food4thought.test.model.RestaurantDataModel;
 import com.food4thought.test.ui.fragments.restuarantdetails.RestaurantDetailsFragment;
 import com.food4thought.test.ui.fragments.restuarantdetails.ReviewFragment;
@@ -58,6 +61,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private TextView website;
     private TextView phone;
     private TextView mText;
+    private Button favourites;
     private ImageView mImageView;
     private RatingBar restaurantRating;
     private JSONObject restaurantDataObject;
@@ -79,7 +83,6 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        lvReview = (ListView) findViewById(R.id.lvReview);
         placeID = Constants.reference;
         //new DisplayData().execute("");
         mGoogleApiClient = new GoogleApiClient
@@ -198,7 +201,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
         }
 
         @Override
-        protected void onPostExecute(RestaurantDataModel restaurantDataModel) {
+        protected void onPostExecute(final RestaurantDataModel restaurantDataModel) {
             super.onPostExecute(restaurantDataModel);
             if (restaurantDataModel != null) {
                 List<RestaurantDataModel.Reviews> reviewsList = restaurantDataModel.getReviews();
@@ -212,6 +215,8 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 website = (TextView) findViewById(R.id.tvQWebsite);
                 mImageView = (ImageView) findViewById(R.id.ivImage);
                 mText = (TextView) findViewById(R.id.tvPhoto);
+                favourites = (Button) findViewById(R.id.btnFavourites);
+
 
                 //Sets the text on the details fragment
                 nameText.setText(restaurantDataModel.getName());
@@ -220,7 +225,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 phone.setText(restaurantDataModel.getFormattedPhoneNumber());
 
                 //gets the photos from the Places Photo API
-                try {
+                /*try {
                     Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
                         @Override
                         public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
@@ -251,8 +256,25 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     });
                 }catch(Exception e){
                     e.printStackTrace();
-                }
+                }*/
                 website.setText(restaurantDataModel.getWebsite());
+                favourites.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            RestaurantDatabase r = Constants.database;
+                            r.addRestaurant(restaurantDataModel);
+                            Context context = getApplicationContext();
+                            CharSequence text = "Added to favoutites";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
                 //Sets the text on the Reviews fragment
                 lvReview = (ListView) findViewById(R.id.lvReview);
