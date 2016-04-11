@@ -19,10 +19,12 @@ public class RestaurantDataModel {
     @SerializedName("international_phone_number")
     private String internationalPhoneNumber;
     private String name;
+    @SerializedName("place_id")
     private String placeId;
     private String Scope;
     @SerializedName("rating")
     private float rating;
+    @SerializedName("reference")
     private String reference;
     private String url;
     private String vicinity;

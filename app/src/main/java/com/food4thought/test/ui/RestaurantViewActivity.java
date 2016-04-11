@@ -26,6 +26,7 @@ import com.food4thought.test.R;
 import com.food4thought.test.constants.Constants;
 import com.food4thought.test.databse.RestaurantDatabase;
 import com.food4thought.test.model.RestaurantDataModel;
+import com.food4thought.test.model.RestaurantDatabaseModel;
 import com.food4thought.test.ui.fragments.restuarantdetails.RestaurantDetailsFragment;
 import com.food4thought.test.ui.fragments.restuarantdetails.ReviewFragment;
 import com.google.android.gms.common.ConnectionResult;
@@ -201,10 +202,18 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
         }
 
         @Override
-        protected void onPostExecute(final RestaurantDataModel restaurantDataModel) {
+        protected void onPostExecute(RestaurantDataModel restaurantDataModel) {
             super.onPostExecute(restaurantDataModel);
             if (restaurantDataModel != null) {
                 List<RestaurantDataModel.Reviews> reviewsList = restaurantDataModel.getReviews();
+
+                final RestaurantDatabaseModel restaurantDatabaseModel = new RestaurantDatabaseModel();
+                restaurantDatabaseModel.setId(restaurantDataModel.getId());
+                restaurantDatabaseModel.setPlaceId(restaurantDataModel.getPlaceId());
+                restaurantDatabaseModel.setName(restaurantDataModel.getName());
+                restaurantDatabaseModel.setRating(restaurantDataModel.getRating());
+                restaurantDatabaseModel.setReference(restaurantDataModel.getReference());
+
                 Constants.reviewsList = reviewsList;
 
                 //Text on the details fragment
@@ -262,8 +271,9 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     @Override
                     public void onClick(View v) {
                         try {
+
                             RestaurantDatabase r = Constants.database;
-                            r.addRestaurant(restaurantDataModel);
+                            r.addRestaurant(restaurantDatabaseModel);
                             Context context = getApplicationContext();
                             CharSequence text = "Added to favoutites";
                             int duration = Toast.LENGTH_SHORT;
