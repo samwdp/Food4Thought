@@ -200,11 +200,11 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 if (map != null) {
                     try {
                         for (final RestaurantModel restaurantModel : result) {
-                            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
+                            //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
                             double lat = restaurantModel.getGeometry().getLocation().getLat();
                             double lng = restaurantModel.getGeometry().getLocation().getLng();
                             LatLng l = new LatLng(lat, lng);
-                            restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet("Rating : " + Double.toString(restaurantModel.getRating())).icon(icon));
+                            restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet("Rating : " + Double.toString(restaurantModel.getRating())));
                             markerArrayList.add(restaurantMarker);
                             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                 @Override

@@ -1,4 +1,4 @@
-package com.food4thought.test.ui.fragments;
+package com.food4thought.test.ui.fragments.restuarantdetails;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

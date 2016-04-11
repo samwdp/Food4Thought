@@ -1,11 +1,9 @@
 package com.food4thought.test.ui;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -14,6 +12,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +26,16 @@ import android.widget.TextView;
 import com.food4thought.test.R;
 import com.food4thought.test.constants.Constants;
 import com.food4thought.test.model.RestaurantDataModel;
-import com.food4thought.test.model.RestaurantModel;
-import com.food4thought.test.ui.fragments.RestaurantDetailsFragment;
-import com.food4thought.test.ui.fragments.ReviewFragment;
+import com.food4thought.test.ui.fragments.restuarantdetails.RestaurantDetailsFragment;
+import com.food4thought.test.ui.fragments.restuarantdetails.ReviewFragment;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.PlacePhotoMetadata;
+import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
+import com.google.android.gms.location.places.PlacePhotoMetadataResult;
+import com.google.android.gms.location.places.PlacePhotoResult;
+import com.google.android.gms.location.places.Places;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -45,7 +51,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RestaurantViewActivity extends AppCompatActivity {
+public class RestaurantViewActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -54,10 +60,14 @@ public class RestaurantViewActivity extends AppCompatActivity {
     private TextView formattedAddress;
     private TextView website;
     private TextView phone;
+    private TextView mText;
+    private ImageView mImageView;
     private RatingBar restaurantRating;
     private JSONObject restaurantDataObject;
-    private String reference;
+    private String placeID;
     private String PLACES_DATA_REQUEST;
+    private GoogleApiClient mGoogleApiClient;
+
 
 
     @Override
@@ -72,10 +82,17 @@ public class RestaurantViewActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         lvReview = (ListView) findViewById(R.id.lvReview);
-        reference = Constants.reference;
+        placeID = Constants.reference;
         //new DisplayData().execute("");
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+
         PLACES_DATA_REQUEST = "https://maps.googleapis.com/maps/api/place/details/json?placeid="
-                + reference
+                + placeID
                 + "&key="
                 + "AIzaSyDxKcc0v8ePBXGkknLrMiivHQJsrK6oo6g";
 
@@ -89,6 +106,11 @@ public class RestaurantViewActivity extends AppCompatActivity {
         adapter.addFragment(new RestaurantDetailsFragment(), "Details");
         adapter.addFragment(new ReviewFragment(), "Reviews");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 
     /**
@@ -190,13 +212,42 @@ public class RestaurantViewActivity extends AppCompatActivity {
                 formattedAddress = (TextView) findViewById(R.id.tvAddress);
                 phone = (TextView) findViewById(R.id.tvPhone);
                 website = (TextView) findViewById(R.id.tvQWebsite);
+                mImageView = (ImageView) findViewById(R.id.ivImage);
+
 
                 nameText.setText(restaurantDataModel.getName());
                 restaurantRating.setRating(restaurantDataModel.getRating());
                 formattedAddress.setText(restaurantDataModel.getFormattedAddress());
                 phone.setText(restaurantDataModel.getFormattedPhoneNumber());
-                website.setText(restaurantDataModel.getWebsite());
 
+                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeID).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
+                    @Override
+                    public void onResult(PlacePhotoMetadataResult placePhotoMetadataResult) {
+                        if (placePhotoMetadataResult.getStatus().isSuccess()) {
+                            PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
+                            int photoCount = photoMetadata.getCount();
+
+                                PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(0);
+                                final String photoDetail = placePhotoMetadata.toString();
+                                placePhotoMetadata.getScaledPhoto(mGoogleApiClient, 500, 500).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+                                    @Override
+                                    public void onResult(PlacePhotoResult placePhotoResult) {
+                                        if (placePhotoResult.getStatus().isSuccess()) {
+                                            mImageView.setImageBitmap(placePhotoResult.getBitmap());
+                                            //Log.i(TAG, "Photo "+photoDetail+" loaded");
+                                        } else {
+                                            //Log.e(TAG, "Photo "+photoDetail+" failed to load");
+                                        }
+                                    }
+                                });
+
+                            photoMetadata.release();
+                        } else {
+                            //Log.e(TAG, "No photos returned");
+                        }
+                    }
+                });
+                website.setText(restaurantDataModel.getWebsite());
                 //Reviews
                 lvReview = (ListView) findViewById(R.id.lvReview);
                 ReviewAdapter adapter = new ReviewAdapter(getApplicationContext(), R.layout.review_row, reviewsList);
@@ -258,8 +309,6 @@ public class RestaurantViewActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
             RestaurantDataModel.Reviews r = restaurantDataModels.get(position);
-            Log.w("JSON", r.getAuthorName());
-            Log.w("JSON", holder.tvReviewText.toString());
 
             holder.tvUser.setText(r.getAuthorName());
             holder.rating.setRating(r.getRating());
