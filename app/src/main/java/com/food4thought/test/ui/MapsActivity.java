@@ -123,6 +123,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
                                     LatLng l = myPlace.getLatLng();
                                     CharSequence c = myPlace.getName();
+                                    Log.w("JSON", myPlace.getId());
                                     restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(c.toString()).snippet("Rating : " + Double.toString(myPlace.getRating())));
                                     markerArrayList.add(restaurantMarker);
                                     map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
