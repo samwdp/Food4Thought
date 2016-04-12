@@ -77,8 +77,8 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
     @Override
     public ArrayList<RestaurantDatabaseModel> getAllRestaurant() {
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
-        SQLiteDatabase db  = this.getReadableDatabase();
-        Cursor cursor      = db.rawQuery(selectQuery, null);
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
         ArrayList<RestaurantDatabaseModel> r = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
@@ -92,7 +92,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
                 if(rest != null) {
                     r.add(rest);
                 } else{
-                    Log.w("JSON", "nothing in restuarant");
+                    Log.w("JSON", "nothing in restaurant");
                 }
 
             } while (cursor.moveToNext());
