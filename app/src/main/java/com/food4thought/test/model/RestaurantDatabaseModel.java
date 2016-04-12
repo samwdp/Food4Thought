@@ -9,6 +9,15 @@ public class RestaurantDatabaseModel {
     private String name;
     private float rating;
     private String reference;
+    private String website;
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 
     public String getId() {
         return id;

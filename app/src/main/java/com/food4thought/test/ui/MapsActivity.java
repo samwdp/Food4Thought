@@ -110,9 +110,12 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     public void getPlaces() {
         PLACES_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?key=AIzaSyDH4Jl_wgyCJeuI1pkPFRj9Q0He8ZR2IxE" +
-                "&location=" + userLat + "," + userLng +
-                "&radius=2000&sensor=true" +
-                "&types=bar|cafe|restaurant";
+                "&location="
+                + userLat
+                + ","
+                + userLng
+                + "&radius=2000&sensor=true"
+                + "&type=restaurant";
 
         Log.w(TAG, PLACES_SEARCH);
 

@@ -25,15 +25,17 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
     public static final String COL_3 = "NAME";
     public static final String COL_4 = "RATING";
     public static final String COL_5 = "REFERENCE";
+    public static final String COL_6 = "WEBSITE";
     public static final String COLUMN_NAME_NULLABLE = "null";
 
     public static final String CREATE_TABLE_RESTAURANT = "CREATE TABLE " + TABLE_NAME
-            + " (" + COL_0+ " INTEGER PRIMARY KEY,"
+            + " (" + COL_0 + " INTEGER PRIMARY KEY,"
             + COL_1+" TEXT UNIQUE,"
             + COL_2+" TEXT,"
             + COL_3+" TEXT,"
             + COL_4+" FLOAT,"
-            + COL_5+" TEXT)";
+            + COL_5+" TEXT"
+            + COL_6+" TEXT)";
 
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS" + TABLE_NAME;
 
@@ -65,6 +67,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
         values.put(COL_3, restaurantModel.getName());
         values.put(COL_4, restaurantModel.getRating());
         values.put(COL_5, restaurantModel.getReference());
+        values.put(COL_6, restaurantModel.getWebsite());
 
         long newRowId;
         newRowId = db.insert(
@@ -107,9 +110,9 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
         return 0;
     }
 
-    public void removeRestuarant(RestaurantDatabaseModel restaurantDatabaseModel){
+    public void removeRestaurant(RestaurantDatabaseModel restaurantDatabaseModel){
         SQLiteDatabase db = this.getWritableDatabase();
-        String s = "DELETE FROM " + TABLE_NAME + " WHERE " + COL_2 + " = " + restaurantDatabaseModel.getPlaceId();
+        String s = "DELETE FROM " + TABLE_NAME + " WHERE " + COL_1 + "='" + restaurantDatabaseModel.getId() + "'";
         db.execSQL(s);
     }
 }

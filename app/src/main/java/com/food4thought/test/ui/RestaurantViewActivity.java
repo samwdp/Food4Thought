@@ -214,6 +214,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 restaurantDatabaseModel.setName(restaurantDataModel.getName());
                 restaurantDatabaseModel.setRating(restaurantDataModel.getRating());
                 restaurantDatabaseModel.setReference(restaurantDataModel.getReference());
+                restaurantDatabaseModel.setWebsite(restaurantDataModel.getWebsite());
 
                 Constants.reviewsList = reviewsList;
 
@@ -295,7 +296,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     @Override
                     public void onClick(View v) {
                         RestaurantDatabase r = Constants.database;
-                        r.removeRestuarant(restaurantDatabaseModel);
+                        r.removeRestaurant(restaurantDatabaseModel);
                         Context context = getApplicationContext();
                         CharSequence text = "Removed from favoutites";
                         int duration = Toast.LENGTH_SHORT;
@@ -310,7 +311,10 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     public void onClick(View v) {
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Look at this restaurant: " + restaurantDatabaseModel.getName());
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Look at this restaurant: " + restaurantDatabaseModel.getName()
+                                + "\n" +
+                                "Here is the website: " +
+                                restaurantDatabaseModel.getWebsite());
                         sendIntent.setType("text/plain");
                         startActivity(sendIntent);
                     }
