@@ -34,7 +34,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
             + COL_2+" TEXT,"
             + COL_3+" TEXT,"
             + COL_4+" FLOAT,"
-            + COL_5+" TEXT"
+            + COL_5+" TEXT,"
             + COL_6+" TEXT)";
 
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS" + TABLE_NAME;
@@ -92,6 +92,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
                 rest.setName(cursor.getString(3));
                 rest.setRating(cursor.getFloat(4));
                 rest.setReference(cursor.getString(5));
+                rest.setReference(cursor.getString(6));
                 if(rest != null) {
                     r.add(rest);
                 } else{

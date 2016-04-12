@@ -3,6 +3,7 @@ package com.food4thought.test.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -64,7 +65,6 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private TextView mText;
     private Button favourites;
     private Button removeFavourites;
-    private Button share;
     private ImageView mImageView;
     private RatingBar restaurantRating;
     private JSONObject restaurantDataObject;
@@ -84,6 +84,8 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+
 
         placeID = Constants.reference;
         //new DisplayData().execute("");
@@ -228,7 +230,6 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 mText = (TextView) findViewById(R.id.tvPhoto);
                 favourites = (Button) findViewById(R.id.btnFavourites);
                 removeFavourites = (Button) findViewById(R.id.btnRemoveFavourites);
-                share = (Button) findViewById(R.id.btnShare);
 
 
                 //Sets the text on the details fragment
@@ -249,7 +250,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                             if (photoCount > 1) {
                                 PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(0);
                                 final String photoDetail = placePhotoMetadata.toString();
-                                placePhotoMetadata.getScaledPhoto(mGoogleApiClient, 500, 500).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+                                placePhotoMetadata.getScaledPhoto(mGoogleApiClient, 300, 300).setResultCallback(new ResultCallback<PlacePhotoResult>() {
                                     @Override
                                     public void onResult(PlacePhotoResult placePhotoResult) {
                                         if (placePhotoResult.getStatus().isSuccess()) {
@@ -306,7 +307,8 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     }
                 });
 
-                share.setOnClickListener(new View.OnClickListener() {
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent sendIntent = new Intent();

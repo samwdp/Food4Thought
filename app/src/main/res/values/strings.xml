@@ -16,6 +16,7 @@
     <string name="title_activity_restaurant">Restaurant</string>
     <string name="one">Details</string>
     <string name="selected_place">Last Selected Place:</string>
+    <string name="hintTxtItem">Add a category</string>
 
     <string name="place_details">
     <![CDATA[
@@ -34,11 +35,6 @@
         <item>Restaurant</item>
         <item>Bar</item>
         <item>Pub</item>
-        <item>Indian</item>
-        <item>Drinks</item>
-        <item>Food</item>
         <item>Cafe</item>
-        <item>Coffee</item>
     </string-array>
-
 </resources>

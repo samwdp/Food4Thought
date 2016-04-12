@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -55,7 +58,10 @@ import java.util.List;
 public class CategoryActivity extends DrawerActivity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private ArrayList<String> list = new ArrayList<>();
     private Spinner spinner;
+    private Button addButton;
+    private ArrayAdapter<String> adapter;
     private ListView lvCategories;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
@@ -65,6 +71,7 @@ public class CategoryActivity extends DrawerActivity implements
     private String type;
     private static final String TAG = "MyActivity";
     private LocationManager locMan;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,14 @@ public class CategoryActivity extends DrawerActivity implements
         View activityView = layoutInflater.inflate(R.layout.activity_category, null, false);
         frameLayout.addView(activityView);
 
+        String[] array = getResources().getStringArray(R.array.category_array);
+        for(String s : array){
+            list.add(s);
+        }
+
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
+
+        //Gets the location of the user
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient
                     .Builder(this)
@@ -82,18 +97,14 @@ public class CategoryActivity extends DrawerActivity implements
                     .enableAutoManage(this, this)
                     .build();
         }
-
         getLocation();
 
+        //Set the spinner
         spinner = (Spinner) findViewById(R.id.spinner);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.category_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
+        //ArrayAdapter.createFromResource(this, R.array.category_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -115,7 +126,18 @@ public class CategoryActivity extends DrawerActivity implements
             }
         });
 
-
+        //button
+        addButton = (Button) findViewById(R.id.btnAdd);
+        addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText txtItem = (EditText) findViewById(R.id.txtItem);
+                        list.add(txtItem.getText().toString());
+                        txtItem.setText("");
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+        //set the list view for items to be added
         lvCategories = (ListView) findViewById(R.id.lvCategoryList);
 
     }
