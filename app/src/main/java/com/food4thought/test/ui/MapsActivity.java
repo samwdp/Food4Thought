@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,28 +84,29 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-
     }
 
 
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
-        String s = Constants.placeId;
-        Constants.placeId = null;
+        String s = Constants.reference;
+        Constants.reference = null;
         updatePlaces();
 
-        if(s != null){
+        if (s != null) {
             getPlaceFromSearch(s);
-        } else{
+            Constants.reference = null;
+        } else {
             getPlaces();
+            Constants.reference = null;
         }
     }
 
     /**
      * Starts the async task to retrieve data from the places API
      */
-    public void getPlaces(){
+    public void getPlaces() {
         PLACES_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
                 "&location=" + userLat + "," + userLng +
@@ -155,7 +157,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
 
     }
 
-    public void getPlaceFromSearch(String id){
+    public void getPlaceFromSearch(String id) {
         new GetPlaceFromSearch().execute(id);
 
     }
@@ -235,7 +237,10 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                             double lat = restaurantModel.getGeometry().getLocation().getLat();
                             double lng = restaurantModel.getGeometry().getLocation().getLng();
                             LatLng l = new LatLng(lat, lng);
-                            restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(restaurantModel.getName()).snippet("Rating : " + Double.toString(restaurantModel.getRating())));
+                            restaurantMarker = map.addMarker(new MarkerOptions()
+                                    .position(l).title(restaurantModel.getName())
+                                    .snippet("Rating : " + Double.toString(restaurantModel.getRating()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp)));
                             markerArrayList.add(restaurantMarker);
                             map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                 @Override
@@ -252,6 +257,35 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                                     return false;
                                 }
                             });
+                            /*map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                                @Override
+                                public void onMapLongClick(LatLng latLng) {
+                                    ArrayList<LatLng> latLngArrayList = new ArrayList<LatLng>();
+                                    for (Marker marker : markerArrayList) {
+                                        if (Math.abs(marker.getPosition().latitude - latLng.latitude) < 0.05 && Math.abs(marker.getPosition().longitude - latLng.longitude) < 0.05) {
+                                            Toast.makeText(MapsActivity.this, "got clicked", Toast.LENGTH_SHORT).show();
+                                            for (RestaurantModel r : result) {
+                                                double lat = r.getGeometry().getLocation().getLat();
+                                                double lng = r.getGeometry().getLocation().getLng();
+                                                LatLng l = new LatLng(lat, lng);
+                                                if (marker.getPosition().equals(l)) {
+                                                    Log.w(TAG, "Here");
+                                                    Constants.reference = r.getPlace_id();
+                                                    Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                }
+                                            }
+                                            *//*for(LatLng la : latLngArrayList){
+
+                                            }*//*
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            });*/
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -261,7 +295,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         }
     }
 
-    private class GetPlaceFromSearch extends AsyncTask<String, Void, Void>{
+    private class GetPlaceFromSearch extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
@@ -282,22 +316,9 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                                         restaurantMarker = map.addMarker(new MarkerOptions()
                                                 .position(l)
                                                 .title(c.toString())
-                                                .snippet("Rating : " + Double.toString(myPlace.getRating())));
+                                                .snippet("Rating : " + Double.toString(myPlace.getRating()))
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp)));
                                         map.animateCamera(CameraUpdateFactory.newLatLng(l), 150, null);
-                                        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                            @Override
-                                            public boolean onMarkerClick(Marker marker) {
-                                                if (myPlace.getName().equals(marker.getTitle())) {
-                                                    Constants.reference = myPlace.getId();
-                                                    Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                    startActivity(intent);
-                                                }
-                                                return false;
-                                            }
-                                        });
-
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }

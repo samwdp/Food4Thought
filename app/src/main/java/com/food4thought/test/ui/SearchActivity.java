@@ -29,6 +29,7 @@ public class SearchActivity extends DrawerActivity implements PlaceSelectionList
     private TextView mPlaceDetailsText;
     private TextView mPlaceAttribution;
     private Button mPlaceButton;
+    private Button mDetailsButton;
 
 
     @Override
@@ -54,11 +55,18 @@ public class SearchActivity extends DrawerActivity implements PlaceSelectionList
         mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
         mPlaceAttribution = (TextView) findViewById(R.id.place_attribution);
         mPlaceButton = (Button) findViewById(R.id.btnPlacesMap);
+        mDetailsButton = (Button) findViewById(R.id.btnGotoPage);
 
         mPlaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openMapWithPlaceFound();
+            }
+        });
+        mDetailsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPlaceDetails();
             }
         });
     }
@@ -67,7 +75,7 @@ public class SearchActivity extends DrawerActivity implements PlaceSelectionList
     public void onPlaceSelected(Place place) {
         Log.i(TAG, "Place Selected: " + place.getName());
 
-        Constants.placeId = place.getId();
+        Constants.reference = place.getId();
         // Format the returned place's details and display them in the TextView.
         mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(), place.getId(),
                 place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri()));
@@ -105,6 +113,11 @@ public class SearchActivity extends DrawerActivity implements PlaceSelectionList
 
     private void openMapWithPlaceFound(){
         Intent i = new Intent(SearchActivity.this, MapsActivity.class);
+        startActivity(i);
+    }
+
+    private void openPlaceDetails(){
+        Intent i = new Intent (SearchActivity.this, RestaurantViewActivity.class);
         startActivity(i);
     }
 }
