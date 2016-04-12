@@ -77,6 +77,13 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 .findFragmentById(R.id.the_map);
         mapFragment.getMapAsync(this);
 
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+
     }
 
 
@@ -107,51 +114,6 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         GetPlaces placesTask = new GetPlaces();
         placesTask.execute(PLACES_SEARCH);
         Log.w("JSON", PLACES_SEARCH);
-    }
-
-    public void getPlaceFromSearch(String id){
-        Places.GeoDataApi.getPlaceById(mGoogleApiClient, id)
-                .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    @Override
-                    public void onResult(PlaceBuffer places) {
-                        if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                            final Place myPlace = places.get(0);
-
-                            if (map != null) {
-                                try {
-                                    //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
-
-                                    LatLng l = myPlace.getLatLng();
-                                    CharSequence c = myPlace.getName();
-                                    Log.w("JSON", myPlace.getId());
-                                    restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(c.toString()).snippet("Rating : " + Double.toString(myPlace.getRating())));
-                                    markerArrayList.add(restaurantMarker);
-                                    map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                        @Override
-                                        public boolean onMarkerClick(Marker marker) {
-                                            if (myPlace.getName().equals(marker.getTitle())) {
-                                                Constants.reference = myPlace.getId();
-                                                Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                startActivity(intent);
-                                            }
-                                            return false;
-                                        }
-                                    });
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            Log.i(TAG, "Place found: " + myPlace.getName());
-                        } else {
-                            Log.e(TAG, "Place not found");
-                        }
-                        places.release();
-                    }
-                });
     }
 
     @Override
@@ -190,6 +152,11 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 .snippet("Your last recorded location"));
         map.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 150, null);
 
+
+    }
+
+    public void getPlaceFromSearch(String id){
+        new GetPlaceFromSearch().execute(id);
 
     }
 
@@ -291,6 +258,59 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                     }
                 }
             }
+        }
+    }
+
+    private class GetPlaceFromSearch extends AsyncTask<String, Void, Void>{
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            Places.GeoDataApi.getPlaceById(mGoogleApiClient, params[0])
+                    .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                        @Override
+                        public void onResult(PlaceBuffer places) {
+                            if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                                final Place myPlace = places.get(0);
+
+                                if (map != null) {
+                                    try {
+                                        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
+                                        LatLng l = myPlace.getLatLng();
+                                        CharSequence c = myPlace.getName();
+                                        Log.w("JSON", myPlace.getId());
+                                        restaurantMarker = map.addMarker(new MarkerOptions()
+                                                .position(l)
+                                                .title(c.toString())
+                                                .snippet("Rating : " + Double.toString(myPlace.getRating())));
+                                        map.animateCamera(CameraUpdateFactory.newLatLng(l), 150, null);
+                                        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                            @Override
+                                            public boolean onMarkerClick(Marker marker) {
+                                                if (myPlace.getName().equals(marker.getTitle())) {
+                                                    Constants.reference = myPlace.getId();
+                                                    Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    startActivity(intent);
+                                                }
+                                                return false;
+                                            }
+                                        });
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                Log.i(TAG, "Place found: " + myPlace.getName());
+                            } else {
+                                Log.e(TAG, "Place not found");
+                            }
+                            places.release();
+                        }
+                    });
+
+            return null;
         }
     }
 }
