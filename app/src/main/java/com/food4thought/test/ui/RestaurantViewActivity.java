@@ -305,6 +305,17 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     }
                 });
 
+                share.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, "Look at this restaurant: " + restaurantDatabaseModel.getName());
+                        sendIntent.setType("text/plain");
+                        startActivity(sendIntent);
+                    }
+                });
+
                 //Sets the text on the Reviews fragment
                 lvReview = (ListView) findViewById(R.id.lvReview);
                 ReviewAdapter adapter = new ReviewAdapter(getApplicationContext(), R.layout.review_row, reviewsList);
