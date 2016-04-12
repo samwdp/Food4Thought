@@ -18,6 +18,7 @@ public class RestaurantDataModel {
     private String id;
     @SerializedName("international_phone_number")
     private String internationalPhoneNumber;
+    @SerializedName("name")
     private String name;
     @SerializedName("place_id")
     private String placeId;

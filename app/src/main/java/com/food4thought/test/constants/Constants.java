@@ -18,5 +18,7 @@ public class Constants {
     public static List<RestaurantDataModel.Reviews> reviewsList;
     public static RestaurantDatabase database;
     public static Place myPlace;
+    public static float myLat;
+    public static float myLng;
 
 }

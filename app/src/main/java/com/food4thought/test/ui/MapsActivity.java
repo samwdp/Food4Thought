@@ -101,6 +101,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
             getPlaces();
             Constants.reference = null;
         }
+        Constants.reference = null;
     }
 
     /**
@@ -108,10 +109,12 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
      */
     public void getPlaces() {
         PLACES_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
-                "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
+                "json?key=AIzaSyDH4Jl_wgyCJeuI1pkPFRj9Q0He8ZR2IxE" +
                 "&location=" + userLat + "," + userLng +
-                "&radius=1000&sensor=true" +
+                "&radius=2000&sensor=true" +
                 "&types=bar|cafe|restaurant";
+
+        Log.w(TAG, PLACES_SEARCH);
 
         GetPlaces placesTask = new GetPlaces();
         placesTask.execute(PLACES_SEARCH);
@@ -233,7 +236,6 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
                 if (map != null) {
                     try {
                         for (final RestaurantModel restaurantModel : result) {
-                            //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
                             double lat = restaurantModel.getGeometry().getLocation().getLat();
                             double lng = restaurantModel.getGeometry().getLocation().getLng();
                             LatLng l = new LatLng(lat, lng);
