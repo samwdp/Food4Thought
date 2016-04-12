@@ -63,6 +63,8 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private TextView phone;
     private TextView mText;
     private Button favourites;
+    private Button removeFavourites;
+    private Button share;
     private ImageView mImageView;
     private RatingBar restaurantRating;
     private JSONObject restaurantDataObject;
@@ -224,6 +226,8 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 mImageView = (ImageView) findViewById(R.id.ivImage);
                 mText = (TextView) findViewById(R.id.tvPhoto);
                 favourites = (Button) findViewById(R.id.btnFavourites);
+                removeFavourites = (Button) findViewById(R.id.btnRemoveFavourites);
+                share = (Button) findViewById(R.id.btnShare);
 
 
                 //Sets the text on the details fragment
@@ -257,7 +261,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                                 });
 
                                 photoMetadata.release();
-                            } else{
+                            } else {
                                 mText.setText("No photos found");
                             }
                         } else {
@@ -284,6 +288,20 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
+                });
+
+                removeFavourites.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RestaurantDatabase r = Constants.database;
+                        r.removeRestuarant(restaurantDatabaseModel);
+                        Context context = getApplicationContext();
+                        CharSequence text = "Removed from favoutites";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     }
                 });
 

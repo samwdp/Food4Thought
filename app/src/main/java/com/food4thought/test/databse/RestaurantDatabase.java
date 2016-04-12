@@ -106,4 +106,10 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
     public int getRestaurantCount() {
         return 0;
     }
+
+    public void removeRestuarant(RestaurantDatabaseModel restaurantDatabaseModel){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String s = "DELETE FROM " + TABLE_NAME + " WHERE " + COL_2 + " = " + restaurantDatabaseModel.getPlaceId();
+        db.execSQL(s);
+    }
 }
