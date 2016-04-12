@@ -30,6 +30,10 @@ import com.food4thought.test.constants.Constants;
 import com.food4thought.test.model.RestaurantModel;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -56,6 +60,7 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     private double userLat;
     private double userLng;
     private String PLACES_SEARCH;
+    private static final String TAG = "MyActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +83,21 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
+        String s = Constants.placeId;
+        Constants.placeId = null;
         updatePlaces();
+
+        if(s != null){
+            getPlaceFromSearch(s);
+        } else{
+            getPlaces();
+        }
+    }
+
+    /**
+     * Starts the async task to retrieve data from the places API
+     */
+    public void getPlaces(){
         PLACES_SEARCH = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
                 "json?key=AIzaSyDBpCptRbYGtwgp5u2atRWLU2d4J8adYl0" +
                 "&location=" + userLat + "," + userLng +
@@ -88,6 +107,50 @@ public class MapsActivity extends DrawerActivity implements OnMapReadyCallback, 
         GetPlaces placesTask = new GetPlaces();
         placesTask.execute(PLACES_SEARCH);
         Log.w("JSON", PLACES_SEARCH);
+    }
+
+    public void getPlaceFromSearch(String id){
+        Places.GeoDataApi.getPlaceById(mGoogleApiClient, id)
+                .setResultCallback(new ResultCallback<PlaceBuffer>() {
+                    @Override
+                    public void onResult(PlaceBuffer places) {
+                        if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                            final Place myPlace = places.get(0);
+
+                            if (map != null) {
+                                try {
+                                    //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_restaurant_black_24dp);
+
+                                    LatLng l = myPlace.getLatLng();
+                                    CharSequence c = myPlace.getName();
+                                    restaurantMarker = map.addMarker(new MarkerOptions().position(l).title(c.toString()).snippet("Rating : " + Double.toString(myPlace.getRating())));
+                                    markerArrayList.add(restaurantMarker);
+                                    map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                        @Override
+                                        public boolean onMarkerClick(Marker marker) {
+                                            if (myPlace.getName().equals(marker.getTitle())) {
+                                                Constants.reference = myPlace.getId();
+                                                Intent intent = new Intent(MapsActivity.this, RestaurantViewActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
+                                            }
+                                            return false;
+                                        }
+                                    });
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            Log.i(TAG, "Place found: " + myPlace.getName());
+                        } else {
+                            Log.e(TAG, "Place not found");
+                        }
+                        places.release();
+                    }
+                });
     }
 
     @Override

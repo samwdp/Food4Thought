@@ -10,11 +10,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.food4thought.test.R;
+import com.food4thought.test.constants.Constants;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
@@ -24,9 +26,9 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 public class SearchActivity extends DrawerActivity implements PlaceSelectionListener {
 
     private static final String TAG = "MyActivity";
-    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private TextView mPlaceDetailsText;
     private TextView mPlaceAttribution;
+    private Button mPlaceButton;
 
 
     @Override
@@ -51,12 +53,21 @@ public class SearchActivity extends DrawerActivity implements PlaceSelectionList
         // Retrieve the TextViews that will display details about the selected place.
         mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
         mPlaceAttribution = (TextView) findViewById(R.id.place_attribution);
+        mPlaceButton = (Button) findViewById(R.id.btnPlacesMap);
+
+        mPlaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMapWithPlaceFound();
+            }
+        });
     }
 
     @Override
     public void onPlaceSelected(Place place) {
         Log.i(TAG, "Place Selected: " + place.getName());
 
+        Constants.placeId = place.getId();
         // Format the returned place's details and display them in the TextView.
         mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(), place.getId(),
                 place.getAddress(), place.getPhoneNumber(), place.getWebsiteUri()));
@@ -90,6 +101,11 @@ public class SearchActivity extends DrawerActivity implements PlaceSelectionList
         return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
                 websiteUri));
 
+    }
+
+    private void openMapWithPlaceFound(){
+        Intent i = new Intent(SearchActivity.this, MapsActivity.class);
+        startActivity(i);
     }
 }
 

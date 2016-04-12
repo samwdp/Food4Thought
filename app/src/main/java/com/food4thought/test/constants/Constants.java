@@ -16,5 +16,6 @@ public class Constants {
     public static String reference;
     public static List<RestaurantDataModel.Reviews> reviewsList;
     public static RestaurantDatabase database;
+    public static String placeId;
 
 }
