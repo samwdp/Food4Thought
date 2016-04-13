@@ -10,6 +10,15 @@ public class RestaurantDatabaseModel {
     private float rating;
     private String reference;
     private String website;
+    private String note;
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 
     public String getWebsite() {
         return website;

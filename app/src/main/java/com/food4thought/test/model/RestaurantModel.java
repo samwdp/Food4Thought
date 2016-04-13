@@ -33,6 +33,16 @@ public class RestaurantModel {
     @SerializedName("geometry")
     private Geometry geometry;
 
+    private String note;
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     public Geometry getGeometry() {
         return geometry;
     }

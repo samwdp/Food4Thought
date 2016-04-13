@@ -2,6 +2,7 @@ package com.food4thought.test.constants;
 
 import com.food4thought.test.databse.RestaurantDatabase;
 import com.food4thought.test.model.RestaurantDataModel;
+import com.food4thought.test.model.RestaurantDatabaseModel;
 import com.food4thought.test.model.RestaurantModel;
 import com.google.android.gms.location.places.Place;
 
@@ -20,5 +21,6 @@ public class Constants {
     public static Place myPlace;
     public static float myLat;
     public static float myLng;
+    public static RestaurantDatabaseModel restaurantDatabaseModel;
 
 }

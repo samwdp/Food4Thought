@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -24,10 +26,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.food4thought.test.R;
+import com.food4thought.test.adapter.PageAdapter;
 import com.food4thought.test.constants.Constants;
 import com.food4thought.test.databse.RestaurantDatabase;
 import com.food4thought.test.model.RestaurantDataModel;
 import com.food4thought.test.model.RestaurantDatabaseModel;
+import com.food4thought.test.ui.fragments.restuarantdetails.NoteFragment;
 import com.food4thought.test.ui.fragments.restuarantdetails.RestaurantDetailsFragment;
 import com.food4thought.test.ui.fragments.restuarantdetails.ReviewFragment;
 import com.google.android.gms.common.ConnectionResult;
@@ -58,6 +62,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ListView lvReview;
+    private ListView lvNote;
     private TextView nameText;
     private TextView formattedAddress;
     private TextView website;
@@ -65,6 +70,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     private TextView mText;
     private Button favourites;
     private Button removeFavourites;
+    private Button addNote;
     private ImageView mImageView;
     private RatingBar restaurantRating;
     private JSONObject restaurantDataObject;
@@ -78,13 +84,6 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_view);
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
 
 
         placeID = Constants.reference;
@@ -101,16 +100,47 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 + "&key="
                 + "AIzaSyDxKcc0v8ePBXGkknLrMiivHQJsrK6oo6g";
 
+        //setupViewPager(viewPager);
 
-        new GetPlaceData().execute(PLACES_DATA_REQUEST);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.addTab(tabLayout.newTab().setText("Details"));
+        tabLayout.addTab(tabLayout.newTab().setText("Reviews"));
+        tabLayout.addTab(tabLayout.newTab().setText("Notes"));
+        //tabLayout.setupWithViewPager(viewPager);
 
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new RestaurantDetailsFragment(), "Details");
-        adapter.addFragment(new ReviewFragment(), "Reviews");
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        final PagerAdapter adapter = new PageAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        new GetPlaceData().execute(PLACES_DATA_REQUEST);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+                if(tab.getText().equals("Notes")){
+                    RestaurantDatabaseModel r = Constants.restaurantDatabaseModel;
+                    addNote = (Button) findViewById(R.id.btnAddNote);
+                    addButtonListener(r);
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
+
+
+       // new GetPlaceData().execute(PLACES_DATA_REQUEST);
+
     }
 
     @Override
@@ -209,6 +239,8 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
             super.onPostExecute(restaurantDataModel);
             if (restaurantDataModel != null) {
                 List<RestaurantDataModel.Reviews> reviewsList = restaurantDataModel.getReviews();
+                List<RestaurantDataModel> list = new ArrayList<>();
+                list.add(restaurantDataModel);
 
                 final RestaurantDatabaseModel restaurantDatabaseModel = new RestaurantDatabaseModel();
                 restaurantDatabaseModel.setId(restaurantDataModel.getId());
@@ -230,6 +262,7 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 mText = (TextView) findViewById(R.id.tvPhoto);
                 favourites = (Button) findViewById(R.id.btnFavourites);
                 removeFavourites = (Button) findViewById(R.id.btnRemoveFavourites);
+
 
 
                 //Sets the text on the details fragment
@@ -296,14 +329,23 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                 removeFavourites.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RestaurantDatabase r = Constants.database;
-                        r.removeRestaurant(restaurantDatabaseModel);
-                        Context context = getApplicationContext();
-                        CharSequence text = "Removed from favoutites";
-                        int duration = Toast.LENGTH_SHORT;
+                        if (restaurantDatabaseModel.getNote() == null) {
+                            RestaurantDatabase r = Constants.database;
+                            r.removeRestaurant(restaurantDatabaseModel);
+                            Context context = getApplicationContext();
+                            CharSequence text = "Removed from favoutites";
+                            int duration = Toast.LENGTH_SHORT;
 
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        } else{
+                            Context context = getApplicationContext();
+                            CharSequence text = "Nothing happened";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
                     }
                 });
 
@@ -322,12 +364,47 @@ public class RestaurantViewActivity extends AppCompatActivity implements GoogleA
                     }
                 });
 
+                Constants.restaurantDatabaseModel = restaurantDatabaseModel;
+
+
+
                 //Sets the text on the Reviews fragment
                 lvReview = (ListView) findViewById(R.id.lvReview);
                 ReviewAdapter adapter = new ReviewAdapter(getApplicationContext(), R.layout.review_row, reviewsList);
                 lvReview.setAdapter(adapter);
+
+
+                //Log.w(TAG,addNote.getText().toString());
+
+                /*addNote.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        RestaurantDatabase r = Constants.database;
+                        r.removeRestaurant(restaurantDatabaseModel);
+                        Context context = getApplicationContext();
+                        CharSequence text = "Removed from favoutites";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+                });*/
             }
         }
+    }
+
+    public void addButtonListener(final RestaurantDatabaseModel restaurantDatabaseModel){
+        addNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (restaurantDatabaseModel.getNote() == null) {
+                    EditText txtItem = (EditText) findViewById(R.id.editText);
+                    restaurantDatabaseModel.setNote(txtItem.getText().toString());
+                    RestaurantDatabase r = Constants.database;
+                    r.instertNote(restaurantDatabaseModel);
+                }
+            }
+        });
     }
 
     /**

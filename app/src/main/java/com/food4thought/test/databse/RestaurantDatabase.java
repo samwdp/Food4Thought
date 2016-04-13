@@ -26,6 +26,8 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
     public static final String COL_4 = "RATING";
     public static final String COL_5 = "REFERENCE";
     public static final String COL_6 = "WEBSITE";
+    public static final String COL_7 = "NOTE";
+
     public static final String COLUMN_NAME_NULLABLE = "null";
 
     public static final String CREATE_TABLE_RESTAURANT = "CREATE TABLE " + TABLE_NAME
@@ -35,7 +37,8 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
             + COL_3+" TEXT,"
             + COL_4+" FLOAT,"
             + COL_5+" TEXT,"
-            + COL_6+" TEXT)";
+            + COL_6+" TEXT,"
+            + COL_7+" TEXT)";
 
     public static final String DROP_TABLE = "DROP TABLE IF EXISTS" + TABLE_NAME;
 
@@ -68,6 +71,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
         values.put(COL_4, restaurantModel.getRating());
         values.put(COL_5, restaurantModel.getReference());
         values.put(COL_6, restaurantModel.getWebsite());
+        values.put(COL_7, restaurantModel.getNote());
 
         long newRowId;
         newRowId = db.insert(
@@ -93,6 +97,7 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
                 rest.setRating(cursor.getFloat(4));
                 rest.setReference(cursor.getString(5));
                 rest.setReference(cursor.getString(6));
+                rest.setNote(cursor.getString(7));
                 if(rest != null) {
                     r.add(rest);
                 } else{
@@ -115,5 +120,20 @@ public class RestaurantDatabase extends SQLiteOpenHelper implements RestaurantLi
         SQLiteDatabase db = this.getWritableDatabase();
         String s = "DELETE FROM " + TABLE_NAME + " WHERE " + COL_1 + "='" + restaurantDatabaseModel.getId() + "'";
         db.execSQL(s);
+    }
+
+    public void instertNote(RestaurantDatabaseModel restaurantDatabaseModel){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COL_1, restaurantDatabaseModel.getId());
+        values.put(COL_2, restaurantDatabaseModel.getPlaceId());
+        values.put(COL_3, restaurantDatabaseModel.getName());
+        values.put(COL_4, restaurantDatabaseModel.getRating());
+        values.put(COL_5, restaurantDatabaseModel.getReference());
+        values.put(COL_6, restaurantDatabaseModel.getWebsite());
+        values.put(COL_7, restaurantDatabaseModel.getNote());
+
+        db.insert(TABLE_NAME, COL_1 + "='" + restaurantDatabaseModel.getId() + "'", values);
     }
 }
